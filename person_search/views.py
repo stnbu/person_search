@@ -6,4 +6,4 @@ from .models import Persons
 
 def index(request):
     context = {}
-    return render(request, 'person_search/index.html', context)
+    return render(request, 'person_search.html', context)
