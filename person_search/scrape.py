@@ -7,18 +7,18 @@ from person_search import db
 
 def readthing(self, thing):
     try:
-        last_thing = db.Persons.objects.filter(
+        last_thing = db.Person.objects.filter(
             thing=thing).order_by('id').latest()
-    except db.Persons.DoesNotExist:
+    except db.Person.DoesNotExist:
         pass
 
 
 def writethings(self, thing, data):
     insertions = []
     for row in data:
-        insertions.append(db.Persons(thing=thing, **row))
+        insertions.append(db.Person(thing=thing, **row))
     # NOTE: `.save()` done by django orm after `bulk_create`
-    db.Persons.objects.bulk_create(insertions)
+    db.Person.objects.bulk_create(insertions)
 
 
 def main():

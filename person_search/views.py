@@ -2,8 +2,6 @@
 """
 
 from django.shortcuts import render
-from .models import Persons
-
 
 def index(request):
     context = {}
