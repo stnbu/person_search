@@ -6,6 +6,8 @@
 
 * data: https://docs.google.com/spreadsheets/d/12UrT3MddhdXuFbCLmZfz92W6PQCzeg1YQErdFeK_4UY/edit#gid=0
 
+* https://docs.djangoproject.com/en/2.1/howto/custom-model-fields/
+
 Linkedin API
 * https://stackoverflow.com/questions/31481272/python-linkedin-api-how-do-i-use-it?rq=1
 * https://stackoverflow.com/questions/17600244/how-to-use-linkedin-api-with-python

@@ -1,26 +1,15 @@
 from django.db import models
 
+class EncryptedCharField(models.CharField):
+    pass
+
 class Persons(models.Model):
 
-    foo = models.CharField(db_index=True, max_length=100)
-    bar = models.FloatField()
-    baz = models.IntegerField()
+    email = EncryptedCharField(db_index=True, max_length=100)
+    full_name = EncryptedCharField(max_length=200)
 
-    @property
-    def person(self):
-        return getattr(self, 'foo')
-
-    @person.setter
-    def person(self, value):
-        setattr(self, THE_PRICE_FIELD, value)
-        
     def __str__(self):
-        class_name = self.__class__.__name__
-        return '{}@{}'.format(
-            self.dt,
-            self.person
-        )
+        return '%s <%s>' % (self.full_name, self.email)
 
     class Meta:
-        app_label = 'person_search'
-        get_latest_by = 'id'
+        app_label = 'person_search'  # needed by db.py
