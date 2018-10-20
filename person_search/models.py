@@ -1,7 +1,10 @@
 from django.db import models
 
 class EncryptedCharField(models.CharField):
-    pass
+    def from_db_value(self, value, expression, connection, context):
+        pass
+   def to_python(self, value):
+       pass
 
 class Persons(models.Model):
 
