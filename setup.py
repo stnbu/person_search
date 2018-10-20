@@ -13,7 +13,7 @@ setup(
     version='0.0.1-a',
     provides=[name],
     packages=[name],
-        entry_points = {
+    entry_points={
             'console_scripts': ['%s_test=%s.test:main' % (name, name)],
     }
 )

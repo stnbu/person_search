@@ -31,6 +31,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 SECRET = None
 KEY = None
 
+
 def log_io(crypt_func):
     """Log i/o of crypto functions: Input (message) and output (return value) are logged in human-readable
     """
@@ -48,6 +49,7 @@ def log_io(crypt_func):
         return result
     return wrapper
 
+
 def get_secret():
     """Use the contents of `~/.ps_secret` if it exsists. Otherwise just use the string `secret`
     """
@@ -61,6 +63,7 @@ def get_secret():
     else:
         SECRET = b'secret'
     return SECRET
+
 
 def get_key():
     """Get the "key" for symmetric Fernet encryption. If we've already calculated it, return that.
@@ -89,7 +92,6 @@ def get_key():
     return KEY
 
 
-
 @log_io
 def crypt13(message, decrypt=False):
     """ROT13 cipher for testing
@@ -105,6 +107,7 @@ def crypt13(message, decrypt=False):
     else:
         return 'E:' + rot13(message)
 
+
 @log_io
 def crypt(message, decrypt=False):
     """Perform simple symmetric encryption of `message`. `decrypt=True` to decrypt
@@ -114,19 +117,22 @@ def crypt(message, decrypt=False):
         try:
             return f.decrypt(message)
         except InvalidToken as e:
-            raise Exception('Wrong secret. Did you lose `~/.ps_secret` or `~/.ps_salt`? [%s]' % repr(e))
+            raise Exception(
+                'Wrong secret. Did you lose `~/.ps_secret` or `~/.ps_salt`? [%s]' % repr(e))
     else:
         return f.encrypt(message)
+
 
 if __name__ == '__main__':
 
     if False:
         assert crypt13('foo') == 'E:sbb', 'crypt13 appears to be broken.'
-        assert crypt13('E:sbb', decrypt=True) == 'foo', 'crypt13 appears to be broken.'
+        assert crypt13(
+            'E:sbb', decrypt=True) == 'foo', 'crypt13 appears to be broken.'
 
     # how I did very basic testing:
     import sys
-    if len(sys.argv) == 1: # no args: encrypt
+    if len(sys.argv) == 1:  # no args: encrypt
         sys.exit()
         x = crypt('my secret')
         open('/tmp/fasd', 'wb').write(x)
