@@ -13,8 +13,17 @@ def readthing():
 
 def writethings():
     insertions = []
-    for name in ['Mary Blarge', 'Zoo Keeper', 'Mr Joe', 'Bob Example']:
-        insertions.append(db.Person(full_name=name))
+    degrees = {}
+    for i in range(1, 5):
+        degrees[i] = db.Degree(name='foo', institution='bar%s' % i)
+        degrees[i].save()
+    for name, email, degree in [
+            ('Mary Blarge', 'mary@example.com', 1),
+            ('Zoo Keeper', 'zoo@example.com', 2),
+            ('Mr Joe', 'kenm@example.com', 3),
+            ('Bob Example', 'bob@example.com', 4),
+    ]:
+        insertions.append(db.Person(full_name=name, email=email, degree=degrees[degree]))
     # NOTE: `.save()` done by django orm after `bulk_create`
     db.Person.objects.bulk_create(insertions)
 

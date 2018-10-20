@@ -25,47 +25,29 @@ class EncryptedCharField(models.CharField):
         logger.debug('calling get_prep_value with `%s`' % value)
         return crypt(value, decrypt=False)
 
+class Degree(models.Model):
+
+    name = models.CharField(max_length=20)
+    institution = models.CharField(max_length=200)
+
+    def __str__(self):
+        return '%s, %s' % (self.name, self.institution)
+
+    class Meta:
+        app_label = 'person_search'  # needed by db.py
+        unique_together = (('name', 'institution'),)
 
 class Person(models.Model):
 
     full_name = EncryptedCharField(max_length=200)
+    # INPROD: for symplicity, one email per person
+    email = EncryptedCharField(db_index=True, max_length=100, unique=True)
+    # INPROD: for symplicity one degree per person
+    degree = models.ForeignKey(Degree, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.full_name
+        return '%s <%s>' % (self.full_name, self.email)
 
     class Meta:
         app_label = 'person_search'  # needed by db.py
-
-class Email(models.Model):
-
-    person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    address = EncryptedCharField(db_index=True, max_length=100, unique=True)
-
-    def __str__(self):
-        return '%s <%s>' % (self.person.full_name, self.address)
-
-    class Meta:
-        app_label = 'person_search'  # needed by db.py
-
-class Institution(models.Model):
-
-    name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        app_label = 'person_search'  # needed by db.py
-
-class Degree(models.Model):
-
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
-    degree = models.CharField(max_length=200)
-    persons = models.ManyToManyField(Person)
-
-    def __str__(self):
-        return '%s, %s' % (self.degree, self.institution.name)
-
-    class Meta:
-        app_label = 'person_search'  # needed by db.py
-        #unique_together = (('institution', 'degree'),)
+        unique_together = (('full_name', 'email', 'degree'))
