@@ -13,17 +13,16 @@ def readthing(self, thing):
         pass
 
 
-def writethings(self, thing, data):
+def writethings():
     insertions = []
-    for row in data:
-        insertions.append(db.Person(thing=thing, **row))
+    for name in ['Mary Blarge', 'Zoo Keeper', 'Mr Joe']:
+        insertions.append(db.Person(full_name=name))
     # NOTE: `.save()` done by django orm after `bulk_create`
     db.Person.objects.bulk_create(insertions)
-
 
 def main():
     script_basename, _ = os.path.splitext(os.path.basename(__file__))
 
 
 if __name__ == '__main__':
-    main()
+    writethings()
