@@ -39,10 +39,10 @@ def log_io(crypt_func):
         log_output = '`%s()`: %s: we got %s as input, ' % (
             crypt_func.__name__,
             mode,
-            message[:10]
+            message
         )
         result = crypt_func(message, decrypt)
-        log_output += 'we are returning the value %s' % result[:10]
+        log_output += 'we are returning the value %s' % result
         logger.debug(log_output)
         return result
     return wrapper

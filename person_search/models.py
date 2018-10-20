@@ -6,15 +6,20 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 from django.db import models
-#from person_search.crypto import crypt13 as crypt
-from person_search.crypto import crypt
+from person_search.crypto import crypt13 as crypt
+#from person_search.crypto import crypt
 
 
 class EncryptedCharField(models.CharField):
 
     def from_db_value(self, value, expression, connection, context):  # DECRYPT
         logger.debug('calling from_db_value with `%s`' % value)
-        return crypt(value, decrypt=True)
+        return self.to_python(value)
+
+    def to_python(self, value):
+        logger.debug('calling to_python with `%s`' % value)
+        value = crypt(value, decrypt=True)
+        return super(EncryptedCharField, self).to_python(value)
 
     def get_prep_value(self, value):  # ENCRYPT
         logger.debug('calling get_prep_value with `%s`' % value)

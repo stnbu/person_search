@@ -5,17 +5,15 @@
 from person_search import db
 
 
-def readthing(self, thing):
-    try:
-        last_thing = db.Person.objects.filter(
-            thing=thing).order_by('id').latest()
-    except db.Person.DoesNotExist:
-        pass
+def readthing():
+    print(db.Person.objects.filter(full_name__icontains='%'))
+    print(db.Person.objects.filter(full_name='Bob Example'))
+    print(db.Person.objects.all())
 
 
 def writethings():
     insertions = []
-    for name in ['Mary Blarge', 'Zoo Keeper', 'Mr Joe']:
+    for name in ['Mary Blarge', 'Zoo Keeper', 'Mr Joe', 'Bob Example']:
         insertions.append(db.Person(full_name=name))
     # NOTE: `.save()` done by django orm after `bulk_create`
     db.Person.objects.bulk_create(insertions)
@@ -26,3 +24,4 @@ def main():
 
 if __name__ == '__main__':
     writethings()
+    readthing()
