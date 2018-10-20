@@ -6,7 +6,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 from django.db import models
-from person_search.crypto import crypt13 as crypt
+#from person_search.crypto import crypt13 as crypt
+from person_search.crypto import crypt
 
 
 class EncryptedCharField(models.CharField):

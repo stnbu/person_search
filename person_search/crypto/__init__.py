@@ -18,7 +18,6 @@ logger.setLevel(logging.DEBUG)
 import os
 import codecs
 import base64
-from functools import wraps
 
 from cryptography.fernet import InvalidToken
 from cryptography.fernet import Fernet
@@ -35,16 +34,15 @@ KEY = None
 def log_io(crypt_func):
     """Log i/o of crypto functions: Input (message) and output (return value) are logged in human-readable
     """
-    @wraps
     def wrapper(message, decrypt=False):
         mode = ['encrypting', 'decrypting'][decrypt]
         log_output = '`%s()`: %s: we got %s as input, ' % (
             crypt_func.__name__,
             mode,
-            repr(message)[:10]
+            message[:10]
         )
         result = crypt_func(message, decrypt)
-        log_output += 'we are returning the value %s' % repr(result)[:10]
+        log_output += 'we are returning the value %s' % result[:10]
         logger.debug(log_output)
         return result
     return wrapper
@@ -111,16 +109,25 @@ def crypt13(message, decrypt=False):
 @log_io
 def crypt(message, decrypt=False):
     """Perform simple symmetric encryption of `message`. `decrypt=True` to decrypt
+
+    input can be bytes (utf-8) or a string, which is immedately converted to bytes
+    output is always bytes (utf-8)
     """
+
+    if not isinstance(message, bytes):
+        message = message.encode('utf-8')
+
     f = Fernet(get_key())
     if decrypt:
         try:
-            return f.decrypt(message)
+            result = f.decrypt(message)
         except InvalidToken as e:
             raise Exception(
                 'Wrong secret. Did you lose `~/.ps_secret` or `~/.ps_salt`? [%s]' % repr(e))
     else:
-        return f.encrypt(message)
+        result = f.encrypt(message)
+
+    return result.decode('utf-8')
 
 
 if __name__ == '__main__':
