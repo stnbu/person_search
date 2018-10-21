@@ -53,6 +53,8 @@ Instead,
 
 * https://docs.djangoproject.com/en/2.1/howto/custom-model-fields/
 
+* https://www.smashingmagazine.com/2015/07/designing-simple-pie-charts-with-css/
+
 Linkedin API
 * https://stackoverflow.com/questions/31481272/python-linkedin-api-how-do-i-use-it?rq=1
 * https://stackoverflow.com/questions/17600244/how-to-use-linkedin-api-with-python
