@@ -2,7 +2,8 @@
 """
 
 from django.shortcuts import render
+from person_search import pie
 
 def index(request):
-    context = {}
+    context = {'pie_chart': pie.get_pie(38)}
     return render(request, 'person_search.html', context)
