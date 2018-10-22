@@ -61,27 +61,53 @@ TEMPLATES = [
 # INPROD: Not used by us but would be used in production, unless there's a better solution. This POC uses the built in Django DEVELOPMENT web server.
 #WSGI_APPLICATION = 'person_search.wsgi.application'
 
-DATABASES = {
+SQLITE_DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-#     },
-# ]
+POSTGRES_DATABASES = {
+    'default': {},
+    'person_search_ro': {
+        'NAME': 'person_search',
+        'ENGINE': 'django.db.backends.postgresql',
+        'USER': 'person_search_ro',
+        'PASSWORD': 'password'
+    },
+    # INPROD: The read-write password is sitting right here next to the read-only one, so there's limited benefit to having different accounts with exactly this implmentation. In production, it's possible they would be running as separate users and possibly on separate hosts. In a single-master cluster for example.
+    'person_search_rw': {
+        'NAME': 'person_search',
+        #'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        #'HOST': '/run/postgresql',
+        'HOST': 'localhost',
+        'PORT': '',
+        'USER': 'person_search_rw',
+        'PASSWORD': 'password'
+    },
+}
+
+
+####### FIXME FORNOW NOTE ########
+####### FIXME FORNOW NOTE ########
+POSTGRES_DATABASES['default'] = POSTGRES_DATABASES['person_search_rw']
+####### FIXME FORNOW NOTE ########
+####### FIXME FORNOW NOTE ########
+
+
+# This is hacky, but the point is to allow database "profile" selection at the command line.
+_DB_CHOICE = os.getenv('PERSON_SEARCH_RDBMS', '').upper()
+if _DB_CHOICE == 'POSTGRES':
+    DATABASES = POSTGRES_DATABASES
+elif _DB_CHOICE == 'SQLITE':
+    DATABASES = SQLITE_DATABASES
+else:
+    DATABASES = SQLITE_DATABASES
+    #raise RuntimeError('Please set PERSON_SEARCH_RDBMS to one of [POSTGRES, '
+    #                   'SQLITE]')
+
 
 # INPROD: we should care about this stuff
 LANGUAGE_CODE = 'en-us'

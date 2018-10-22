@@ -14,6 +14,7 @@ This crawler re-uses the Django ORM. Note that (as with all django usage) it is 
 A ``db`` object is imported. This module contanis the table classes from ``models``. This is a ``global()`` symbol, but I pass it to the crypto functions as an argument, which (for me) makes the code read better.
 """
 
+import os
 from person_search import db
 from bs4 import BeautifulSoup
 import requests
