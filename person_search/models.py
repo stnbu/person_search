@@ -30,6 +30,12 @@ class Degree(models.Model):
     name = models.CharField(max_length=20)
     institution = models.CharField(max_length=200)
 
+    def is_masters(self):
+        """Using available information about the ``Degree``, return ``True`` if master's degree.
+        """
+        # of course this is a rediculous implementation. It's hard to know without more information. Perhaps have a "master list" of regular expressions, where any match on the contents of the ``name`` column (the name of the degree, BS, etc) constitutes "is masters". Lots of possiblilities.
+        return 'M' in self.name
+
     def __str__(self):
         return '%s, %s' % (self.name, self.institution)
 

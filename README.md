@@ -42,7 +42,13 @@ At a big enough scale I'm pretty sure we'd need to cache and if we did that, we'
 
 I did **no** caching at all because that's not hard to add, even a module-level ``dict`` would do the trick.
 
-Instead,
+Misc
+----
+
+A list of smaller "todos" and remarks about the implementation:
+
+* Imports should be done in a smart, consistent way. I import ``person_search`` by name everywhere for now. It might be cleaved off as a separate package anyhow. All things being equal, just "best practices" is a good idea.
+
 
 * Q: https://www.gapjumpers.me/questions/gapjumpers/qs-362/?utm_swu=8495
 * 100 uses per
