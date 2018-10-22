@@ -64,7 +64,8 @@ TEMPLATES = [
 SQLITE_DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # INPROD: sqlite is only for testing. This absolute path makes things easier.
+        'NAME': os.path.join('/tmp/person_search.sqlite3'),
     }
 }
 

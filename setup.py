@@ -19,11 +19,11 @@ name = 'person_search'
 
 setup(
     python_requires='>={}.{}'.format(*REQUIRED_PYTHON),
-    install_requires=['django>=2.1', 'psycopg2', 'requests', 'psycopg2-binary', 'cryptography'],
+    install_requires=['django>=2.1', 'psycopg2', 'requests', 'psycopg2-binary', 'cryptography', 'bs4'],
     name=name,
     version='0.0.1-a',
     provides=[name],
-    packages=[name],
+    packages=[name, 'person_search.crypto'],
     entry_points={
             'console_scripts': ['%s_test=%s.test:main' % (name, name)],
     }
