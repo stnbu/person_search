@@ -1,4 +1,0 @@
-django>=2.1
-psycopg2
-requests
-psycopg2-binary
