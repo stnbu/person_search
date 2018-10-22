@@ -4,7 +4,7 @@ set -e
 
 read -p 'Blow away everything? You sure?! [ENTER] for yes: ' foo
 
-rm -f db.sqlite3
+rm -f /tmp/person_search.sqlite3
 rm -rf person_search/migrations
 python manage.py makemigrations person_search
 python manage.py migrate
