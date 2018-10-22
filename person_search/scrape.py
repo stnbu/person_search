@@ -1,5 +1,17 @@
 # -*- mode: python; coding: utf-8 -*-
 """Crawl and Scrape!
+
+This is a very simple, strightforward web crawler that makes a few assumptions for simplicity's sake (see ``README.md``). You may run it from the command line, but it requres that *our* webserver is running and listening on port 8000. So before running, please run:
+
+    python manage.py runserver
+
+...in a separate terminal.
+
+This crawler re-uses the Django ORM. Note that (as with all django usage) it is necessary to set ``DJANGO_SETTINGS_MODULE`` before executing. For example, to run this module as a script:
+
+    DJANGO_SETTINGS_MODULE=person_search.settings python scrape.py
+
+A ``db`` object is imported. This module contanis the table classes from ``models``. This is a ``global()`` symbol, but I pass it to the crypto functions as an argument, which (for me) makes the code read better.
 """
 
 from person_search import db
@@ -27,7 +39,7 @@ def scrape_person(content):
         person[parameter] = soup.find('div', {'id': parameter}).get_text().strip()
     return person
 
-def crawl(emails):
+def crawl(emails, db):
     """Given an iterable of email address (strings), fetch the profile web page, scrape, and insert into database.
     """
     for email in emails:
@@ -52,6 +64,7 @@ def crawl(emails):
         if not degree_data['name'] and not degree_data['institution']:
             degree = None
         else:
+            # I beleive this is faster than a try/except that catches ``IntegrityError``. If catching ``IntegrityError`` we'd have to create a transaction and roll back. Worth investigating more, though.
             existing = db.Degree.objects.filter(**degree_data)
             if not existing:
                 degree = db.Degree(**degree_data)
@@ -78,7 +91,7 @@ def crawl(emails):
         person.save()
 
 if __name__ == '__main__':
-        with open('/home/mburr/git/person_search/person_search/resources/actual_persons_email_addresses.txt') as f:
-            crawl(f)
-        with open('/home/mburr/git/person_search/person_search/resources/random_email_addresses.txt') as f:
-            crawl(f)
+    resources = os.path.join(os.path.dirname(__file__), 'resources')
+    for address_file in 'actual_persons_email_addresses.txt', 'random_email_addresses.txt':
+        with open(os.path.join(resources, address_file)) as f:
+            crawl(f, db)
