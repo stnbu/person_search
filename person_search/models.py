@@ -31,24 +31,14 @@ class EncryptedCharField(models.CharField):
             return value
         return crypt(value, decrypt=False)
 
-class EncryptedLowerCharField(models.CharField):
-    """Encrypted ``CharField`` where values are always lower-cased (see remark about encryption in ``README.md``)
+class EncryptedLowerCharField(EncryptedCharField):
+    """Encrypted ``CharField`` where values are always lower-cased  before encryption (see remark about encryption in ``README.md``)
     """
-
-    # INPROD: a whole separate class for this is the wrong way to do things. HOWEVER, I've chosen to do encryption the wrong way (see ``README.md``) and so this is just a consequence of that choice. Instead of using postgresql encryption, which would greatly simplify things, I'm creating a class that first lower-cases values and then encrypts them.
-
-    def from_db_value(self, value, expression, connection, context):  # DECRYPT
-        logger.debug('calling from_db_value with `%s`' % value)
-        return self.to_python(value)
-
-    def to_python(self, value):
-        logger.debug('calling to_python with `%s`' % value)
-        value = crypt(value, decrypt=True)
-        return super(EncryptedLowerCharField, self).to_python(value)
 
     def get_prep_value(self, value):  # ENCRYPT
         logger.debug('calling get_prep_value with `%s`' % value)
-        return crypt(value.lower(), decrypt=False)
+        value = value.lower()
+        return super(EncryptedLowerCharField, self).get_prep_value(value)
 
 class Degree(models.Model):
 

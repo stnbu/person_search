@@ -40,7 +40,7 @@ Caching
 
 At a big enough scale I'm pretty sure we'd need to cache and if we did that, we're now sitting around with a whole bunch of unencrypted data, whether in memory or on disk. That has more security implications. So, again, I'd at least have another look at just building for security (as in preventing attacks) instead of encryption. Need more info to understand the requirements.
 
-I did **no** caching at all because that's not hard to add, even a module-level ``dict`` would do the trick.
+I did **no** caching at all because that's not hard to add, even a module-level ``dict`` would be a big improvement if we had real encryption with more data.
 
 Misc
 ----
@@ -48,6 +48,15 @@ Misc
 A list of smaller "todos" and remarks about the implementation:
 
 * Imports should be done in a smart, consistent way. I import ``person_search`` by name everywhere for now. It might be cleaved off as a separate package anyhow. All things being equal, just "best practices" is a good idea.
+* I assume that for a given email, the scraped data never chances. This both simplifies things and speeds things up. In production, we might want to periodically chedck for updates: if a records has "expired", add that email address to the queue of addresses to be scraped.
+
+
+ UserWarning: No parser was explicitly specified, so I'm using the best available HTML parser for this system ("html.parser"). This usually isn't a problem, but if you run this code on another system, or in a different virtual environment, it may use a different parser and behave differently.
+
+The code that caused this warning is on line 18 of the file person_search/scrape.py. To get rid of this warning, pass the additional argument 'features="html.parser"' to the BeautifulSoup constructor.
+
+  soup = BeautifulSoup(content)
+
 
 
 * Q: https://www.gapjumpers.me/questions/gapjumpers/qs-362/?utm_swu=8495

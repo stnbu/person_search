@@ -8,7 +8,7 @@ from . import views
 urlpatterns = [
     path('', RedirectView.as_view(url='/pie/')),  # a pattern would be better
     path('pie/', views.show_pie, name='pie'),
-    path('test_person/<str:email>/', views.person_profile, name='person_profile')
+    path('person_profile/<str:email>/', views.person_profile, name='person_profile')
 ]
 
 # INPROJ: does not belong here if this is an 'app'

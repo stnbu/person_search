@@ -24,8 +24,6 @@ def scrape_person(content):
             'degree_name',
             'institution',
     ]:
-
-        print(parameter, '<'*20)
         person[parameter] = soup.find('div', {'id': parameter}).get_text().strip()
     return person
 
@@ -34,7 +32,13 @@ def crawl(emails):
     """
     for email in emails:
 
-        url = 'http://127.0.0.1:8000/test_person/%s' % email.lower().strip()
+        email = email.strip()  # emails are stored/compared as lower-case, so strip() is enough
+
+        if db.Person.objects.filter(email=email):
+            logger.info('we alread have a record for email: %s' % email)
+            continue
+
+        url = 'http://127.0.0.1:8000/person_profile/%s' % email
         response = requests.get(url)
         if response.status_code != 200:
             logger.warn('scraping "%s" resulted in status %s' % (email, response.status_code))
@@ -48,11 +52,14 @@ def crawl(emails):
         if not degree_data['name'] and not degree_data['institution']:
             degree = None
         else:
-            degree = db.Degree(**degree_data)
-            try:
+            existing = db.Degree.objects.filter(**degree_data)
+            if not existing:
+                degree = db.Degree(**degree_data)
                 degree.save()
-            except IntegrityError:
-                logger.warn('Tried to add existing degree: %s' % repr(degree))
+            else:
+                degree, = existing
+
+        # We assume data doesn't change (see ``README.md``) and we check for the email at the top of this loop, so we should be able to add here without integrity problems.
         person_data = {
             'full_name': raw_scrape_data['full_name'],
             'email': raw_scrape_data['email'],
@@ -60,30 +67,18 @@ def crawl(emails):
             'degree': degree,
         }
         person = db.Person(**person_data)
+        # INPROD: Saving with every pass of this loop is inefficient. Minimally we should do something like batch them with
+        #
+        # >>> insertions = []
+        # >>> for person_data in data:
+        # >>>     insertions.append(db.Person(**person_data))
+        # >>> db.Person.objects.bulk_create(insertions)
+        #
+        # Maybe saving every n records...
         person.save()
 
 if __name__ == '__main__':
         with open('/home/mburr/git/person_search/person_search/resources/actual_persons_email_addresses.txt') as f:
             crawl(f)
-
-# def readthing():
-#     print(db.Person.objects.filter(full_name__icontains='%'))
-#     print(db.Person.objects.filter(full_name='Bob Example'))
-#     print(db.Person.objects.all())
-# def writethings():
-#     insertions = []
-#     degrees = {}
-#     for i in range(1, 5):
-#         degrees[i] = db.Degree(name='foo', institution='bar%s' % i)
-#         degrees[i].save()
-#     for name, email, degree in [
-#             ('Mary Blarge', 'mary@example.com', 1),
-#             ('Zoo Keeper', 'zoo@example.com', 2),
-#             ('Mr Joe', 'kenm@example.com', 3),
-#             ('Bob Example', 'bob@example.com', 4),
-#     ]:
-#         insertions.append(db.Person(full_name=name, email=email, degree=degrees[degree]))
-#     # NOTE: `.save()` done by django orm after `bulk_create`
-#     db.Person.objects.bulk_create(insertions)
-# def main():
-#     script_basename, _ = os.path.splitext(os.path.basename(__file__))
+        with open('/home/mburr/git/person_search/person_search/resources/random_email_addresses.txt') as f:
+            crawl(f)

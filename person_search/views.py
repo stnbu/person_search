@@ -64,6 +64,9 @@ def person_profile(request, email):
                 break
         else:
             # else we create a good-enough random person
+            # for a given email, ``random.seed()`` to its value "as an int". This ensures we consistentl get the same person info for a given email.
+            i = int.from_bytes(bytes(email, encoding='utf-8'), byteorder='big')
+            random.seed(i)
             full_name = '%s %s' % (_get_random_word(7, capitalize=True), _get_random_word(12, capitalize=True))
             gender = random.choice(['M', 'F'])
             degree_name  = random.choice(['MS', 'MA', 'MBA', 'AA', 'BA', 'BS', 'PHD'])
