@@ -45,46 +45,34 @@ def show_pie(request):
         if HAS_MASTERS is None or time.time() - HAS_MASTERS[1] > HAS_MASTERS_TTL:
             logger.debug('[re]calculating "HAS_MASTERS"...')
             # INPROD: There are probably faster ways of doing this:
-            count = len([p for p in models.Person.objects.all() if p.degree.is_masters()])
+            count = len([p for p in models.Person.objects.all() if p.degree and p.degree.is_masters()])
             HAS_MASTERS = (count, time.time())
         percent = HAS_MASTERS[0] / total * 100.0
-    context = {'pie_chart': pie.get_pie(int(percent))}
-    return render(request, 'person_search.html', context)
+    context = {'pie_chart': pie.get_pie(round(percent))}
+    return render(request, 'pie.html', context)
 
-def test_person(request, email=None):
-    """Lacking something to scrape (see ``README.md``) we create a "test person". If an email address is supplied in the requiest, the person with that email address is returned from the supplied CSV test data, otherwise a random (very random) person is returned.
+def person_profile(request, email):
+    """Lacking something to scrape (see ``README.md``) we create a "test person". If an email address is supplied in the requiest, the person with that email address is returned from the supplied CSV test data, otherwise a random (very random) person is returned. No checking of the input is done.
     """
     # INPROD: We wouldn't do anything like this in production!! This is all totally contrived.
-    if email:
-        resources = os.path.join(os.path.dirname(__file__), 'resources')
-        with open(os.path.join(resources, 'actual_persons.csv')) as f:  # file i/o !
-            f.readline()  # discard header row
-            for row in csv.reader(f):
-                if email.lower().strip() == row[1].lower().strip():
-                    break
-            else:
-                raise Http404('No person with email address "%s"' % email)
-
-        full_name, email, gender, degree_name, institution = row
-
-        context = {
-            'full_name': full_name,
-            'email': email,
-            'gender': gender,
-            'degree_name': degree_name,
-            'institution': institution,
-        }
-    else:
-        full_name = '%s %s' % (_get_random_word(7, capitalize=True), _get_random_word(12, capitalize=True))
-        email = '%s@%s.com' % (_get_random_word(7), _get_random_word(12))
-        gender = random.choice(['M', 'F'])
-        degree_name  = random.choice(['MS', 'MA', 'MBA', 'AA', 'BA', 'BS', 'PHD'])
-        institution = 'University of %s' % _get_random_word(25, capitalize=True)
-        context = {
-            'full_name': full_name,
-            'email': email,
-            'gender': gender,
-            'degree_name': degree_name,
-            'institution': institution,
-        }
-    return render(request, 'test_person.html', context)
+    resources = os.path.join(os.path.dirname(__file__), 'resources')
+    with open(os.path.join(resources, 'actual_persons.csv')) as f:  # file i/o !
+        f.readline()  # discard header row
+        for row in csv.reader(f):
+            if email.lower().strip() == row[1].lower().strip():
+                full_name, _, gender, degree_name, institution = row
+                break
+        else:
+            # else we create a good-enough random person
+            full_name = '%s %s' % (_get_random_word(7, capitalize=True), _get_random_word(12, capitalize=True))
+            gender = random.choice(['M', 'F'])
+            degree_name  = random.choice(['MS', 'MA', 'MBA', 'AA', 'BA', 'BS', 'PHD'])
+            institution = 'University of %s' % _get_random_word(25, capitalize=True)
+    context = {
+        'full_name': full_name,
+        'email': email,
+        'gender': gender,
+        'degree_name': degree_name,
+        'institution': institution,
+    }
+    return render(request, 'person_profile.html', context)
