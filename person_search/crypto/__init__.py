@@ -94,7 +94,6 @@ def get_key():
 def crypt13(message, decrypt=False):
     """ROT13 cipher for testing
     """
-
     def rot13(message):
         """We put an `E:` in front of the "encrypted" version. This helper function does just  ROT13
         """

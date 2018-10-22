@@ -48,7 +48,7 @@ class Person(models.Model):
     full_name = EncryptedCharField(max_length=200)
     # INPROD: for symplicity, one email per person
     email = EncryptedCharField(db_index=True, max_length=100, unique=True)
-    # INPROD: for symplicity one degree per person
+    # INPROD: for symplicity one degree per person. Note that this is not encrypted. Posgres level encryption was the way to go. See ``README.md``
     degree = models.ForeignKey(Degree, on_delete=models.CASCADE)
 
     def __str__(self):
