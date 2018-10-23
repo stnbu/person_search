@@ -1,4 +1,1 @@
-
-
-def main():
-    print('yay')
+# -*- mode: python; coding: utf-8 -*-

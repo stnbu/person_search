@@ -131,24 +131,25 @@ ORM
 
 Since we're talking about using the data "outside" of Django, I monkey-patched things so that I could use the ORM just using plain Python (the scraping in other words). There are many, many possibilities here and they all depend on the requirements. Things that come to mind:
 
-* Have the scraper write to a separate db and have things synchronized using RabbitMQ or something. The scrapers run in a "farm" collecting queries and reply back to the queue with some structured result. The web UI and/or the database would be participating in that queue, inserting the queries and waiting for responses (asyncronously).
-* Use a separate ORM for scraper I/O. Something like sqlalchemy is robust and well-tested and would have fewer risks, sinice it doesn't look like the Django ORM is often used thi way. The downside is maintaining two schemas (table classes), etc.
+* Have the scraper write to a separate db and have things synchronized using RabbitMQ or something. The scrapers run in a "farm" collecting queries and reply back to the queue with some structured result. The web UI and/or the database would be participating in that queue, inserting the queries and waiting for responses (asynchronously).
+* Use a separate ORM for scraper I/O. Something like sqlalchemy is robust and well-tested and would have fewer risks, since it doesn't look like the Django ORM is often used this way. The downside is maintaining two schema (table classes), etc.
+* The pie chart should be implemented in the browser. We could just return a single number and let JavaScript do the rest. I chose to implement everything in Python.
 
 Scaling
 -------
 
-I have no idea how much scaling we'd be expected to do. Three per second or millions per second...? The answer varies. For a more robust PoC I would consider simple PostgreSQL clustering. That wold not improve write performance, but that would be slower so we might not care. Some kind of CDS for anything static or cachable. Django would be running in some "clustered" fashion. Minimally Django would be running behind a fast, secure web server like nginix (tbd). On the web side of things, db access would be read-only (so clustering improves performance there) so minimally we would have a separate Postgres user for that, but having something else running that has write access to the same database is sketchy. It needs to get updated *somehow* gut that is some security "surface area" to keep in mind.
+I have no idea how much scaling we'd be expected to do. Three per second or millions per second...? The answer varies. For a more robust PoC I would consider simple PostgreSQL clustering. That wold not improve write performance, but that would be slower so we might not care. Some kind of CDS for anything static or cachable. Django would be running in some "clustered" fashion. Minimally Django would be running behind a fast, secure web server like NGINX (tbd). On the web side of things, db access would be read-only (so clustering improves performance there) so minimally we would have a separate Postgres user for that, but having something else running that has write access to the same database is sketchy. It needs to get updated *somehow* gut that is some security "surface area" to keep in mind.
 
 Encryption
 ----------
 
 Whether this is a good idea or not depends on the requirements. In most cases, I'd question the benefit. Some process has clear read access to that database via some kind of encryption and that's where an attacker would attack. So encryption gets you nothing unless someone breaks in the hard way (but why do that)?
 
-That's not to say there are no use cases for it. It would be an interesting discussino and at worst it complicates and slows thigns down. I could be wrong afterall!!
+That's not to say there are no use cases for it. It would be an interesting discussion and at worst it complicates and slows things down. I could be wrong after all!!
 
 I chose to use symmetric encryption since having the private key and having a secret are pretty much the same thing. There are use cases for asymmetric encryption. I just don't know if this is one of them. Also, the **the encryption should live in the database** most likely. I wrote it into the ORM, which for performance and design reasons is a poor choice, at least in my implementation. Searching the data is greatly complicated, we can search by encrypted output and that's what I did, but 1) it must be encryption that results in the same output for any given input, otherwise searching and querying get **REALLY** complicated and 2) it should probably be done at the RDBMS level. I didn't investigate that for the sake of time.
 
-And because my first implementation doesn't satisfy the first point above, I was unable to use it. So I created a trival rot13 based "encryption" as a standin so in some weak sense, the data is "encrypted". Since this was fast, I had no caching concerns (see below.)
+And because my first implementation doesn't satisfy the first point above, I was unable to use it. So I created a trivial rot13 based "encryption" as a stand-in so in some weak sense, the data is "encrypted". Since this was fast, I had no caching concerns (see below.)
 
 In production I would investigate PostgreSQL's encryption options, which are [well documented](https://www.postgresql.org/docs/current/static/encryption-options.html).
 
@@ -170,8 +171,9 @@ Misc
 A list of smaller "todos" and remarks about the implementation:
 
 * Imports should be done in a smart, consistent way. I import ``person_search`` by name everywhere for now. It might be cleaved off as a separate package anyhow. All things being equal, just "best practices" is a good idea.
-* I assume that for a given email, the scraped data never chances. This both simplifies things and speeds things up. In production, we might want to periodically chedck for updates: if a records has "expired", add that email address to the queue of addresses to be scraped.
+* I assume that for a given email, the scraped data never chances. This both simplifies things and speeds things up. In production, we might want to periodically check for updates: if a records has "expired", add that email address to the queue of addresses to be scraped.
 * I also chose to use some OTS libraries, which I think is bad practice. It's ok to use some libraries, but if they're not well maintained, be prepared to completely understand and *own* them indefinitely.
+* Encryption as it's implemented adds a large amount of overhead. This also fixed by encrypting at the RDBMS-level.
 
 Resources
 =========

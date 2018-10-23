@@ -1,17 +1,32 @@
 # -*- mode: python; coding: utf-8 -*-
-"""
+"""Simple cryptography helper functions
+
+    crypto('clear_string') --> 'encrypted_string'
+    crypto('encrypted_string', decrypt=True) --> 'clear_string'
 """
 # INPROD:
 #
 #  tl;dr -- Crypto is hard, and this would require some research to do properly.
 #
-# This code does what it says, but I'm under no illusion that this is safe to use in production. I chose the path of least resistance here and use symmetric encryption using the popular `cryptography` module. Depending on the use case, it might be better to focus on making sure no one ever gets to the data in the first place. One possible case where we'd want to use asymmetric encryption is where we have a multi-master cluster of database servers, in which case we could have only the public key on these hosts to permit writting. Reading is a different problem. If read performance is not critical, just have one host with the private key?
-# After implementing this I find ``Fernet seems not to be maintained anymore. There has been no updates for the spec in three years. Original developers are in radio silence`` [https://appelsiini.net/2017/branca-alternative-to-jwt/]
+# This code does what it says, but I'm under no illusion that this is safe to
+# use in production. I chose the path of least resistance here and use symmetric
+# encryption using the popular `cryptography` module. Depending on the use case,
+# it might be better to focus on making sure no one ever gets to the data in the
+# first place. One possible case where we'd want to use asymmetric encryption is
+# where we have a multi-master cluster of database servers, in which case we
+# could have only the public key on these hosts to permit writing. Reading is a
+# different problem. If read performance is not critical, just have one host
+# with the private key?
+#
+# After implementing I find this: ``Fernet seems not to be maintained
+# anymore. There has been no updates for the spec in three years. Original
+# developers are in radio silence``
+# [https://appelsiini.net/2017/branca-alternative-to-jwt/]
 
-# this code is based upon example code in the docs: https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet
+# this code is based upon example code in the docs:
+# https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -32,7 +47,8 @@ KEY = None
 
 
 def log_io(crypt_func):
-    """Log i/o of crypto functions: Input (message) and output (return value) are logged in human-readable
+    """Log i/o of crypto functions: Input (message) and output (return value)
+    are logged in human-readable
     """
     def wrapper(message, decrypt=False):
         mode = ['encrypting', 'decrypting'][decrypt]
@@ -49,7 +65,8 @@ def log_io(crypt_func):
 
 
 def get_secret():
-    """Use the contents of `~/.ps_secret` if it exsists. Otherwise just use the string `secret`
+    """Use the contents of `~/.ps_secret` if it exists. Otherwise just use the
+    string `secret`
     """
     global SECRET
     if SECRET is not None:
@@ -64,7 +81,8 @@ def get_secret():
 
 
 def get_key():
-    """Get the "key" for symmetric Fernet encryption. If we've already calculated it, return that.
+    """Get the "key" for symmetric Fernet encryption. If we've already
+    calculated it, return that.
     """
     global KEY
     if KEY is not None:
@@ -95,7 +113,8 @@ def crypt13(message, decrypt=False):
     """ROT13 cipher for testing
     """
     def rot13(message):
-        """We put an `E:` in front of the "encrypted" version. This helper function does just  ROT13
+        """We put an `E:` in front of the "encrypted" version. This helper
+        function does just ROT13
         """
         return codecs.getencoder('rot-13')(message)[0]
 
@@ -107,10 +126,11 @@ def crypt13(message, decrypt=False):
 
 @log_io
 def crypt(message, decrypt=False):
-    """Perform simple symmetric encryption of `message`. `decrypt=True` to decrypt
+    """Perform simple symmetric encryption of `message`. `decrypt=True` to
+    decrypt
 
-    input can be bytes (utf-8) or a string, which is immedately converted to bytes
-    output is always bytes (utf-8)
+    Input can be bytes (utf-8) or a string, which is immediately converted to
+    bytes. Return value is always bytes (utf-8)
     """
 
     if not isinstance(message, bytes):
@@ -122,7 +142,8 @@ def crypt(message, decrypt=False):
             result = f.decrypt(message)
         except InvalidToken as e:
             raise Exception(
-                'Wrong secret. Did you lose `~/.ps_secret` or `~/.ps_salt`? [%s]' % repr(e))
+                'Wrong secret. Did you lose `~/.ps_secret` or `~/.ps_salt`? '
+                '[%s]' % repr(e))
     else:
         result = f.encrypt(message)
 
@@ -131,9 +152,8 @@ def crypt(message, decrypt=False):
 
 if __name__ == '__main__':
 
-    if False:
-        assert crypt13('foo') == 'E:sbb', 'crypt13 appears to be broken.'
-        assert crypt13(
+    assert crypt13('foo') == 'E:sbb', 'crypt13 appears to be broken.'
+    assert crypt13(
             'E:sbb', decrypt=True) == 'foo', 'crypt13 appears to be broken.'
 
     # how I did very basic testing:

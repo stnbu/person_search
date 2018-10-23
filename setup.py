@@ -1,7 +1,8 @@
-# -*- mode: pyton coding: utf-8 -*-
-"""Setup
+# -*- mode: python coding: utf-8 -*-
+"""Python ``distutils`` setup module
 
-Even for PoC, this makes things easier. `pip install -e foo`, `./setup.py test`, etc.
+Even for a PoC, this makes things easier. ``pip install -e foo``,
+``./setup.py test``, etc.
 """
 
 import sys
@@ -18,8 +19,9 @@ from distutils.core import setup
 name = 'person_search'
 
 setup(
-    python_requires='>={}.{}'.format(*REQUIRED_PYTHON),
-    install_requires=['django>=2.1', 'psycopg2', 'requests', 'psycopg2-binary', 'cryptography', 'bs4'],
+    python_requires='>=%s.%s' % REQUIRED_PYTHON,
+    install_requires=['django>=2.1', 'requests', 'psycopg2-binary',
+                      'cryptography', 'bs4'],
     name=name,
     version='0.0.1-a',
     provides=[name],

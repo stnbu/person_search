@@ -1,2 +1,8 @@
+<html>
 <!-- this for sure needs to be done a different way. See README.md -->
 {{ pie_chart|safe }}
+
+<p>Total persons: {{ total_persons }}</p>
+<p>Persons with Masters {{ with_masters }}</p>
+<p>Percent with Masters ({{ masters_color }}) {{ percent_with_masters }}&#37;</p>
+</html>
