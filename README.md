@@ -122,7 +122,7 @@ This package scrapes and parses my own contrived "profile" web pages hosted by t
 
 If an email from the sample data is queried, the corresponding sample data is returned. If any other (random) email address is queried, random data is generated and returned.
 
-Once the web server is running, you can check out both [random results](http://127.0.0.1:8000/person_profile/foo@bar.com) and [results from the supplied data](http://127.0.0.1:8000/person_profile/rini.joseph@colorado.edu/)                                               ).
+Once the web server is running, you can check out both [random results](http://127.0.0.1:8000/person_profile/foo@bar.com) and [results from the supplied data](http://127.0.0.1:8000/person_profile/rini.joseph@colorado.edu/).
 
 If I were implementing a more complex scraper I would consider:
 
