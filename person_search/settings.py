@@ -60,7 +60,7 @@ SQLITE_DATABASES = {
 POSTGRES_DATABASES = {
     'default': {
         'NAME': 'person_search',
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': 'person_search',
         'PASSWORD': 'password'
     },
