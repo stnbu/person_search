@@ -7,13 +7,13 @@ import os
 import time
 import random
 import csv
-from django.shortcuts import render
-from django.http import Http404
-from person_search import pie, models
 
 import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+from django.shortcuts import render
+from person_search import pie, models
 
 
 # INPROD: ``HAS_MASTERS`` will be set to a tuple: (<percent>, <timestamp>). When

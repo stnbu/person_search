@@ -24,18 +24,18 @@ class EncryptedCharField(models.CharField):
     """
 
     def from_db_value(self, value, expression, connection, context):  # DECRYPT
-        logger.debug('calling from_db_value with `%s`' % value)
+        logger.debug('calling from_db_value with `%s`', value)
         return self.to_python(value)
 
     def to_python(self, value):
-        logger.debug('calling to_python with `%s`' % value)
+        logger.debug('calling to_python with `%s`', value)
         if not value:
             return value
         value = crypt(value, decrypt=True)
         return super(EncryptedCharField, self).to_python(value)
 
     def get_prep_value(self, value):  # ENCRYPT
-        logger.debug('calling get_prep_value with `%s`' % value)
+        logger.debug('calling get_prep_value with `%s`', value)
         if not value:
             return value
         return crypt(value, decrypt=False)
@@ -47,7 +47,7 @@ class EncryptedLowerCharField(EncryptedCharField):
     """
 
     def get_prep_value(self, value):  # ENCRYPT
-        logger.debug('calling get_prep_value with `%s`' % value)
+        logger.debug('calling get_prep_value with `%s`', value)
         value = value.lower()
         return super(EncryptedLowerCharField, self).get_prep_value(value)
 

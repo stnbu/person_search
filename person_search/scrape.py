@@ -22,9 +22,9 @@ as an argument, which (to me) makes the code read better.
 """
 
 import os
-from person_search import db
 from bs4 import BeautifulSoup
 import requests
+from person_search import db
 
 import logging
 logger = logging.getLogger(__name__)
@@ -58,14 +58,14 @@ def crawl(emails, db):
         # strip() is enough
 
         if db.Person.objects.filter(email=email):
-            logger.info('we already have a record for email: %s' % email)
+            logger.info('we already have a record for email: %s', email)
             continue
 
         url = 'http://127.0.0.1:8000/person_profile/%s/' % email
         response = requests.get(url)
         if response.status_code != 200:
-            logger.warn('scraping "%s" resulted in status %s' %
-                        (email, response.status_code))
+            logger.warning('scraping "%s" resulted in status %s',
+                           email, response.status_code)
             continue
 
         raw_scrape_data = scrape_person(response.content)

@@ -120,8 +120,8 @@ def crypt13(message, decrypt=False):
 
     if decrypt:
         return rot13(message[2:])
-    else:
-        return 'E:' + rot13(message)
+
+    return 'E:' + rot13(message)
 
 
 @log_io
