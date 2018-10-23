@@ -1,11 +1,11 @@
 # -*- mode: python; coding: utf-8 -*-
 """``get_pie()`` returns SVG for a single-parameter pie chart with slice
-``color`` for a given ``percent`` (hardcoded size, color).
+``color`` for a given ``percent`` (hardcoded size).
 """
 
 def get_pie(percent, color):
     """returns SVG for a single-parameter pie chart with slice ``color`` for a
-    given ``percent`` (hardcoded size, color).
+    given ``percent`` (hardcoded size).
     """
     # from
     # https://www.smashingmagazine.com/2015/07/designing-simple-pie-charts-with-css/
