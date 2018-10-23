@@ -53,8 +53,13 @@ Codename:	bionic
 and
 
 ```
-OS-X
+System Version:	macOS 10.13.3 (17D102)
+Kernel Version:	Darwin 17.4.0
+Model Name:	MacBook Air
+Model Identifier:	MacBookAir7,2
 ```
+
+(In the case of OSX you will likely need to modify the ``psql`` command in ``person_search/scripts/mkdb.sh`` to something like ``psql template1``.)
 
 Quick Start
 ===========
