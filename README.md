@@ -143,7 +143,7 @@ Since we're talking about using the data "outside" of Django, I monkey-patched t
 Scaling
 -------
 
-I have no idea how much scaling we'd be expected to do. The answer varies. For a more robust PoC that scales reasonably I would consider simple PostgreSQL clustering. That wold not improve write performance, but that would be slower so we might not care. Some kind of CDN for anything static or cachable. Django would be running in some "clustered" fashion. Minimally Django would be running behind a fast, secure web server like NGINX. On the web side of things, db access would be read-only (so clustering improves performance there) so minimally we would have a separate PostgreSQL user for that, but having something else running that has write access to the same database is sketchy. It needs to get updated *somehow* but that is some security "surface area" to keep in mind.
+I have no idea how much scaling we'd be expected to do. The design would vary depending on the answer. For a more robust PoC that scales reasonably I would consider simple PostgreSQL clustering. That wold not improve write performance, but that would be slower so we might not care. Some kind of CDN for anything static or cachable. Django would be running in some "clustered" fashion. Minimally Django would be running behind a fast, secure web server like NGINX. On the web side of things, db access would be read-only (so clustering improves performance there) so minimally we would have a separate PostgreSQL user for that, but having something else running that has write access to the same database is sketchy. It needs to get updated *somehow* but that is some security "surface area" to keep in mind.
 
 Encryption
 ----------
