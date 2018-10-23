@@ -134,7 +134,7 @@ If I were implementing a more complex scraper I would consider:
 ORM
 ---
 
-Since we're talking about using the data "outside" of Django, I monkey-patched things so that I could use the ORM just using plain Python (the scraping in other words). There are many, many possibilities here and they all depend on the requirements. Things that come to mind:
+Since we're talking about using the data "outside" of Django, I monkey-patched things so that I could re-use the *Django* ORM and configuration in plain Python (the scraping in other words). There are many, many possibilities here and they all depend on the requirements. Things that come to mind:
 
 * Have the scraper write to a separate db and have things synchronized using an AMQP. The scrapers run in a "farm" collecting queries and reply back to the queue with some structured result. The web UI and/or the database would be participating in that queue, inserting the queries and waiting for responses (asynchronously).
 * Use a separate ORM for scraper I/O. Something like sqlalchemy is robust and well-tested and would have fewer risks, since it doesn't look like the Django ORM is often used this way. The downside is maintaining two schema (table classes), etc.
