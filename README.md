@@ -31,7 +31,7 @@ The profile values should be encrypted and stored in a postgres db.
 Include a README.md and a design document for your prototype.
 ```
 
-Helper scripts are provided to do integration testing, see instructions below.
+Helper scripts are provided to do integration testing, see instructions and design document below.
 
 Requirements to Run
 ===================
