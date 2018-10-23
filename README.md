@@ -154,7 +154,7 @@ That's not to say there are no use cases for it. It would be an interesting disc
 
 I chose to use symmetric encryption since having the private key on the system (say in memory) and having a secret on the system are pretty much the same thing security-wise. There are use cases for asymmetric encryption. I just don't know if this is one of them. Also, the **the encryption should live in the database** most likely. I wrote it into the ORM, which for performance and design reasons is a poor choice, at least in my implementation. Searching the data is greatly complicated, we can search by encrypted output and that's what I did, but 1) it must be encryption that results in the same output for any given input, otherwise searching and querying get **REALLY** complicated and 2) it should probably be done at the RDBMS level. I didn't investigate that for the sake of time.
 
-And because my first encryption implementation doesn't satisfy the first point above, I was unable to use it. So I created a trivial rot13 based "encryption" as a stand-in so in some weak sense, the data is "encrypted". Since this was fast, I had no caching concerns (see below.)
+And because my first encryption implementation (``person_search.crypto.crypt()``) doesn't satisfy the first point above, I was unable to use it. So I created a trivial rot13 based "encryption" as a stand-in so in some weak sense, the data is "encrypted". Since this was fast, I had no caching concerns (see below.)
 
 In production I would investigate PostgreSQL's encryption options, which are [well documented](https://www.postgresql.org/docs/current/static/encryption-options.html).
 
