@@ -1,4 +1,4 @@
-# -*- mode: python coding: utf-8 -*-
+# -*- mode: python; coding: utf-8 -*-
 """Python ``distutils`` setup module
 
 Even for a PoC, this makes things easier. ``pip install -e foo``,
