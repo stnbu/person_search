@@ -192,5 +192,4 @@ Resources
 * https://www.smashingmagazine.com/2015/07/designing-simple-pie-charts-with-css/
 * https://stackoverflow.com/questions/31481272/python-linkedin-api-how-do-i-use-it
 * https://stackoverflow.com/questions/17600244/how-to-use-linkedin-api-with-python
-* https://www.linkedin.com/developer/apps/7010964/auth
 * https://developer.linkedin.com/docs/oauth2
