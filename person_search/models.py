@@ -22,6 +22,7 @@ from person_search.crypto import crypt13 as crypt
 class EncryptedCharField(models.CharField):
     """An encrypted ``CharField``
     """
+
     def from_db_value(self, value, expression, connection, context):  # DECRYPT
         logger.debug('calling from_db_value with `%s`' % value)
         return self.to_python(value)
@@ -39,14 +40,17 @@ class EncryptedCharField(models.CharField):
             return value
         return crypt(value, decrypt=False)
 
+
 class EncryptedLowerCharField(EncryptedCharField):
     """An encrypted ``CharField`` where values are always lower-cased before
     encryption (see remark about encryption in ``README.md``)
     """
+
     def get_prep_value(self, value):  # ENCRYPT
         logger.debug('calling get_prep_value with `%s`' % value)
         value = value.lower()
         return super(EncryptedLowerCharField, self).get_prep_value(value)
+
 
 class Degree(models.Model):
 
@@ -70,6 +74,7 @@ class Degree(models.Model):
     class Meta:
         app_label = 'person_search'  # needed by db.py
         unique_together = (('name', 'institution'),)
+
 
 class Person(models.Model):
     """The column widths are over-spec'd here to account for encoding overhead.

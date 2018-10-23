@@ -76,8 +76,8 @@ elif _DB_CHOICE == 'SQLITE':
     DATABASES = SQLITE_DATABASES
 else:
     DATABASES = SQLITE_DATABASES
-    ### or we could require it be explicit...
-    #raise RuntimeError('Please set PERSON_SEARCH_RDBMS to one of [POSTGRES, '
+    # or we could require it be explicit...
+    # raise RuntimeError('Please set PERSON_SEARCH_RDBMS to one of [POSTGRES, '
     #                   'SQLITE]')
 
 # INPROD: we should care about this stuff

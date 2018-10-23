@@ -3,6 +3,7 @@
 ``color`` for a given ``percent`` (hardcoded size).
 """
 
+
 def get_pie(percent, color):
     """returns SVG for a single-parameter pie chart with slice ``color`` for a
     given ``percent`` (hardcoded size).

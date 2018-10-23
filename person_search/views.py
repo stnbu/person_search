@@ -28,9 +28,10 @@ logger.setLevel(logging.DEBUG)
 # asynchronously would be something to look into.
 HAS_MASTERS = None
 HAS_MASTERS_TTL = 600  # how many seconds maximum to we keep the value of
-                       # ``HAS_MASTERS`` before recalculating.
+# ``HAS_MASTERS`` before recalculating.
 
 MASTERS_COLOR = 'blue'  # what color our pie slice?
+
 
 def _get_random_word(length, capitalize=False, length_fuzz=0.2):
     """get a random "word" of approximately ``length``
@@ -43,6 +44,7 @@ def _get_random_word(length, capitalize=False, length_fuzz=0.2):
     if capitalize:
         word = word.capitalize()
     return word
+
 
 def show_pie(request):
 
@@ -57,8 +59,8 @@ def show_pie(request):
         if HAS_MASTERS is None or time.time() - HAS_MASTERS[1] > HAS_MASTERS_TTL:
             logger.debug('[re]calculating "HAS_MASTERS"...')
             # INPROD: There are probably faster ways of doing this:
-            count = len([p for p in models.Person.objects.all() if p.degree and
-                         p.degree.is_masters()])
+            count = len([p for p in models.Person.objects.all()
+                         if p.degree and p.degree.is_masters()])
             HAS_MASTERS = (count, time.time())
         percent = HAS_MASTERS[0] / total * 100.0
     context = {
@@ -69,6 +71,7 @@ def show_pie(request):
         'masters_color': MASTERS_COLOR,
     }
     return render(request, 'pie.html', context)
+
 
 def person_profile(request, email):
     """Lacking something to scrape (see ``README.md``) we create a "test
@@ -97,8 +100,8 @@ def person_profile(request, email):
             full_name = '%s %s' % (_get_random_word(7, capitalize=True),
                                    _get_random_word(12, capitalize=True))
             gender = random.choice(['M', 'F'])
-            degree_name  = random.choice(['MS', 'MA', 'MBA', 'AA', 'BA', 'BS',
-                                          'PHD'])
+            degree_name = random.choice(['MS', 'MA', 'MBA', 'AA', 'BA', 'BS',
+                                         'PHD'])
             institution = 'University of %s' % _get_random_word(25,
                                                                 capitalize=True)
     context = {

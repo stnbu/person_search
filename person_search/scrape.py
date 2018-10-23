@@ -30,6 +30,7 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+
 def scrape_person(content):
     """Scrape well-formatted html, extracting person information
     """
@@ -42,8 +43,10 @@ def scrape_person(content):
             'degree_name',
             'institution',
     ]:
-        person[parameter] = soup.find('div', {'id': parameter}).get_text().strip()
+        person[parameter] = soup.find(
+            'div', {'id': parameter}).get_text().strip()
     return person
+
 
 def crawl(emails, db):
     """Given an iterable of email address (strings), fetch the profile web page,
@@ -52,7 +55,7 @@ def crawl(emails, db):
     for email in emails:
 
         email = email.strip()  # emails are stored/compared as lower-case, so
-                               # strip() is enough
+        # strip() is enough
 
         if db.Person.objects.filter(email=email):
             logger.info('we already have a record for email: %s' % email)
@@ -61,7 +64,8 @@ def crawl(emails, db):
         url = 'http://127.0.0.1:8000/person_profile/%s/' % email
         response = requests.get(url)
         if response.status_code != 200:
-            logger.warn('scraping "%s" resulted in status %s' % (email, response.status_code))
+            logger.warn('scraping "%s" resulted in status %s' %
+                        (email, response.status_code))
             continue
 
         raw_scrape_data = scrape_person(response.content)
@@ -103,6 +107,7 @@ def crawl(emails, db):
         #
         # Maybe saving every n records...
         person.save()
+
 
 if __name__ == '__main__':
 
