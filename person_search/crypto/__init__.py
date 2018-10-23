@@ -1,8 +1,8 @@
 # -*- mode: python; coding: utf-8 -*-
 """Simple cryptography helper functions
 
-    crypto('clear_string') --> 'encrypted_string'
-    crypto('encrypted_string', decrypt=True) --> 'clear_string'
+    crypt('clear_string') --> 'encrypted_string'
+    crypt('encrypted_string', decrypt=True) --> 'clear_string'
 """
 # INPROD:
 #
@@ -10,7 +10,7 @@
 #
 # This code does what it says, but I'm under no illusion that this is safe to
 # use in production. I chose the path of least resistance here and use symmetric
-# encryption using the popular `cryptography` module. Depending on the use case,
+# encryption using the ``cryptography`` package. Depending on the use case,
 # it might be better to focus on making sure no one ever gets to the data in the
 # first place. One possible case where we'd want to use asymmetric encryption is
 # where we have a multi-master cluster of database servers, in which case we

@@ -111,7 +111,9 @@ The instructions for testing with PostgreSQL are identical, but you would instea
 About The Design
 ================
 
-With only five days I had to make some decisions and sacrifice some features and elegance for the sake of time. Here are some of the relevant decisions:
+With only five days I had to make some decisions and sacrifice some features and elegance for the sake of time. The source itself also includes commentary about what might should be different for "production". These are noted with ``INPROD``.
+
+Here's an overview of the design:
 
 Scraping
 --------
@@ -179,6 +181,7 @@ A list of smaller "todos" and remarks about the implementation:
 * I assume that for a given email, the scraped data never changes. This both simplifies things and speeds things up. In production, we might want to periodically check for updates: if a record has "expired", add that email address to the queue of addresses to be scraped.
 * I also chose to use some off-the-shelf 3rd party libraries, which I think should be avoided if possible. It's ok to use some 3rd party libraries, but if they're not well maintained, be prepared to completely understand and *own* them indefinitely.
 * Encryption as it's implemented adds a large amount of overhead. This also fixed by encrypting at the RDBMS-level.
+* There are more efficient ways to crawl. Ideally, we should only make one pass through the content, as implemented we make one pass per parameter extracted.
 
 Resources
 =========

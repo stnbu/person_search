@@ -113,6 +113,10 @@ if __name__ == '__main__':
 
     # Run a simple test scraping run using bundled email address lists as
     # input
+
+    # Note that it's possible to get a pie chart for just the supplied data by
+    # limiting the below loop to *only* ``actual_persons_email_addresses.txt``
+
     resources = os.path.join(os.path.dirname(__file__), 'resources')
     for address_file in ['actual_persons_email_addresses.txt',
                          'random_email_addresses.txt']:
