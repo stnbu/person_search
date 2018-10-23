@@ -177,7 +177,7 @@ A list of smaller "todos" and remarks about the implementation:
 
 * Imports should be done in a smart, consistent way. I import ``person_search`` by name everywhere for now. It might be cleaved off as a separate package anyhow. All things being equal, just "best practices" is a good idea.
 * I assume that for a given email, the scraped data never changes. This both simplifies things and speeds things up. In production, we might want to periodically check for updates: if a record has "expired", add that email address to the queue of addresses to be scraped.
-* I also chose to use some OTS libraries, which I think should be avoided if possible. It's ok to use some 3rd party libraries, but if they're not well maintained, be prepared to completely understand and *own* them indefinitely.
+* I also chose to use some off-the-shelf 3rd party libraries, which I think should be avoided if possible. It's ok to use some 3rd party libraries, but if they're not well maintained, be prepared to completely understand and *own* them indefinitely.
 * Encryption as it's implemented adds a large amount of overhead. This also fixed by encrypting at the RDBMS-level.
 
 Resources
