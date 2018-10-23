@@ -61,6 +61,7 @@ POSTGRES_DATABASES = {
     'default': {
         'NAME': 'person_search',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': 'localhost',
         'USER': 'person_search',
         'PASSWORD': 'password'
     },
