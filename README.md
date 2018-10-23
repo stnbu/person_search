@@ -1,3 +1,99 @@
+#Using Person Search
+
+This set of scripts and python packages meet the requirements of the following programming challenge:
+
+```
+Challenge Brief
+
+In this role you’ll be building secure tools to identify the gender, educational background, university/schools attended, work experience, location, certifications/ courses, etc of a person, given their name and email address.
+
+Given the full name and email address of a person, build a web scraping tool in Python that identifies the following information:
+- gender
+- degree(s) earned (MS/BS/ BA, etc)
+- universities/ schools attended
+
+The tool should be capable of reporting the number of people with a Master’s degree in the form of pie chart.
+
+You may use existing open source or publicly available technologies/ APIs to build this tool.
+
+To check if the tool is accurate use the attached csv file (in View Resources) of 50 names and emails for testing. Your tool should aim to accurately identify details for 7 out 10 profiles.
+
+The profile values should be encrypted and stored in a postgres db.
+
+Include a README.md and a design document for your prototype.
+```
+
+Helper scripts are provided to do integration testing, see instructions below.
+
+Requirements to Run
+===================
+
+* Python >= 3.5
+* ``pip``
+* Internet access
+* A working PostgreSQL installation and sudo access
+
+Tested on
+
+```
+Distributor ID:	Ubuntu
+Description:	Ubuntu 18.04.1 LTS
+Release:	18.04
+Codename:	bionic
+```
+
+and
+
+```
+OS-X
+```
+
+Quick Start
+===========
+
+The following assumes that the current working directory is the ``person_search`` package directory (the root of the tarball).
+
+First install in "editable" mode
+
+```bash
+pip install -e .
+```
+
+This should download and install the required python packages (feel free to use a virtualenv).
+
+Sqlite
+------
+
+To run a quick "integration" test using Sqlite3 (will write to ``/tmp``) first "make clean"...
+
+```bash
+export PERSON_SEARCH_RDBMS=SQLITE
+./person_search/scripts/sqlite-from-zero.sh
+```
+
+Then run the web server...
+
+```bash
+python manage.py runserver
+```
+
+In another terminal...
+```bash
+export PERSON_SEARCH_RDBMS=SQLITE
+DJANGO_SETTINGS_MODULE='person_search.settings' python person_search/scrape.py
+```
+
+This script takes an iterable of email addresses as input and uses the Django ORM (hence the environment variable) to scrape user profile web pages and writes results to the configured database. We assume a 1:1 mapping between "full name" and "email" and therefore the email address alone is sufficient for scraping.
+
+Once complete, you can visit the pie chart to view the results of "persons with masters" at
+
+* [http://127.0.0.1:8000/pie/](http://127.0.0.1:8000/pie/)
+
+PostgreSQL
+----------
+
+The instructions for testing with PostgreSQL are identical, but you would insead set ``PERSON_SEARCH_RDBMS=POSTGRES`` and ``./person_search/scripts/mkdb.sh`` is used instead of ``./person_search/scripts/sqlite-from-zero.sh`` to prep the database. See ``person_search/scripts/*`` for details.
+
 
 About The Design
 ================
@@ -7,9 +103,20 @@ With only five days I had to make some decisions and sacrifice some features and
 Scraping
 --------
 
-Simply scrapes google and "does its best" at collecting info by follwing links in the search results and using some tricks to narrow things down. This might be a lagitamete use case for an AI, and that would only make sense on a much bigger scale because it would be a big ivestment of time (not 5 days!) Scraping data off the web, as opposed to fetching it from an API is the basis for a whole industry. There may be tricks or insider info for where this data can be found, but that would be a lot of ratholing, time that would instead be spent gathering accurate requirements in production. I also chose to use some OTS libraries, which I think is bad practice. It's ok to use some libraries, but if they're not well maintained, be prepared to completely understand and *own* them on an ongoing basis.
+As far as I can tell https://rapportive.com/ was aquired by Linkedin and is no longer free to use. If this is a REST API that provides structued results, then the problem is easy. If it provides *part* of the answer and some scraping and crawling is required, that requires a bit of work. But gernalized scraping for this kind of information is hard. There is ongoing development in this domain and a truly *general* solution probaly would be a huge project requiring some "AI". I chose to focus on other aspects of the exercise and demonstrate some simple scraping in my solution. Everything eles is implemented per the specs.
 
-I think with regardto scraping or data gathering, "I did my best" sums it up best. I did send a clarification request when quried for questions by email. I didn't get a respoinse, but it that's what I expected given the nature of the question so I carried on...
+This package scrapes and parses my own contrived "profile" web pages hosted by the built-in Django web server. These are intentionally designed to be easy to parse.
+
+If a email from the sample data is queried, the correpsonding samlpe data is returned. If any other (random) email address is queried, random data is generated and returned.
+
+Once the web server is running, you can check out both [random results](http://127.0.0.1:8000/person_profile/foo@bar.com) and [results from the supplied data](http://127.0.0.1:8000/person_profile/rini.joseph@colorado.edu/)                                               ).
+
+If I were implementing a more complex scraper I would consider:
+
+* Logic to narrow down the possiblities
+* Per-domain scraping "drivers": Have a custom scraper for facebook and a custom scraper for linkedin with exactly the same interface (which would be documented).
+* Logic flows like "if linkedin member check github" ...
+* Trying to learn more about the state of the art with regard to scraping and google searching with a [home-grown API](https://pypi.org/project/google/).
 
 ORM
 ---
@@ -42,6 +149,11 @@ At a big enough scale I'm pretty sure we'd need to cache and if we did that, we'
 
 I did **no** caching at all because that's not hard to add, even a module-level ``dict`` would be a big improvement if we had real encryption with more data.
 
+Testing
+-------
+
+I have done minimal testing due to time constraints. Some Django unit tests have been implemented and the different utility scripts provide a measure of "integration testing".
+
 Misc
 ----
 
@@ -49,6 +161,7 @@ A list of smaller "todos" and remarks about the implementation:
 
 * Imports should be done in a smart, consistent way. I import ``person_search`` by name everywhere for now. It might be cleaved off as a separate package anyhow. All things being equal, just "best practices" is a good idea.
 * I assume that for a given email, the scraped data never chances. This both simplifies things and speeds things up. In production, we might want to periodically chedck for updates: if a records has "expired", add that email address to the queue of addresses to be scraped.
+* I also chose to use some OTS libraries, which I think is bad practice. It's ok to use some libraries, but if they're not well maintained, be prepared to completely understand and *own* them on an ongoing basis.
 
 
  UserWarning: No parser was explicitly specified, so I'm using the best available HTML parser for this system ("html.parser"). This usually isn't a problem, but if you run this code on another system, or in a different virtual environment, it may use a different parser and behave differently.
